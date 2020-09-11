@@ -1,6 +1,6 @@
 # paircorrelation2d
 
-paircorrelation2d is a Python module to compute the 2D radial distribution function (pair correlation function) g(r) for a set of points, corrected to take account of the boundary effects.
+paircorrelation2d is a Python module to compute the 2D pair correlation function ([radial distribution function](https://en.wikipedia.org/wiki/Radial_distribution_function)) g(r) for a set of points, corrected to take account of the boundary effects.
 
 ## Installation
 
