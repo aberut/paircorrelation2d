@@ -79,15 +79,16 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
             (default value: False)
 
         - plot (bool): 
-            if True, shows the computed g(r) at the end 
+            if True, shows the points that were kept, and the computed g(r). 
             (default value: False).
             
         - full_output (bool):
             if True, the function also returns also "raw" distribution of 
-            distances between the points PDF(r), the distance of each point to
-            the closest boundary of the area of interest, the normalization 
-            factors, and the estimated density of points in the area of 
-            interest.
+            distances between the points PDF(r), the new array of coordinates 
+            with only the points that were considered for computing g(r), the 
+            distance of each point to the closest boundary of the area of 
+            interest, the normalization factors, and the estimated density of 
+            points in the area of interest.
             (default value: False). 
     
     Outputs:
@@ -98,6 +99,7 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
     Optional output:
         
         - PDF(r): a 1x(M-1) numpy array
+        - new_array_positions: a 2xN numpy array
         - distance_to_boundary: a 1xN numpy array
         - normalization_factor: a Nx(M-1) numpy array
         - estimated_density: a float
@@ -134,7 +136,6 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
     densite=nb_part/(area_of_interest.area) #average density of particles
     border_area=area_of_interest.boundary #the boundary (line) of the area of interest (polygon)
     
-    normalisation=np.ones((nb_part,len(bins_distances)-1)) #normalization factors to take account of the boundaries
     rings=[[] for i in range(len(bins_distances)-1)]
     ring_area=np.zeros(len(bins_distances)-1) #true ring areas
     ring_area_approx=np.zeros(len(bins_distances)-1) #approximate ring areas (useful for normalization calculation)
@@ -159,15 +160,21 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
     
     #For each point, computes its distance to the boundary, and for each bin computes the normalization factor
     #(the area of "the intersection of the ring and the area of interest", divided by the ring area)
+    normalisation=np.ones((nb_part,len(bins_distances)-1)) #normalization factors to take account of the boundaries
     dist_to_border=np.zeros(nb_part)
     
     if fast_method==True:
         
         for ii in range(nb_part):
             dist_to_border[ii]=positions_of_interest[ii].distance(border_area) #distance of current point to boundary
-            
-        array_positions=array_positions[np.where(dist_to_border>bins_distances[-1])[0],:] #points too close to the boundary are excluded
+        
+        far_enough=np.where(dist_to_border>bins_distances[-1])[0] #indexes of points far enough from the boundary
+        array_positions=array_positions[far_enough,:] #points too close to the boundary are excluded
         nb_part=len(array_positions) #the new number of points
+        
+        if full_output==True:
+            dist_to_border=dist_to_border[far_enough] #points too close to the boundary are excluded
+            normalisation=np.ones((nb_part,len(bins_distances)-1)) #just so that the matrix has the right size
         
     else:
         
@@ -208,14 +215,24 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
     
     if plot==True:
         plt.figure()
+        plt.scatter(array_positions[:,0],array_positions[:,1])
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.title('Points kept to compute g(r)')
+        
+        plt.figure()
         plt.plot(radii,g_of_r_normalized)
         plt.xlabel('r')
         plt.ylabel('g(r)')
         plt.title('Radial Distribution Function')
     
     if full_output==True:
-        results=(g_of_r_normalized, radii, g_of_r, dist_to_border, normalisation, densite)
+        results=(g_of_r_normalized, radii, g_of_r, array_positions, dist_to_border, normalisation, densite)
     else:
         results=(g_of_r_normalized, radii)
+    
+    if show_timing==True:
+        t5=time.time()-t0
+        print('Total time: %f s for %i points '%(t5,nb_part))
     
     return results
