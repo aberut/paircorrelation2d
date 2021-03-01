@@ -21,9 +21,10 @@ from paircorrelation2d import pcf2d
 
 plt.plot(r,g_of_r)
 ```
+
 ### For the patient
 
-See [example.ipynb](https://cameleon.univ-lyon1.fr/aberut/paircorrelation2d/-/blob/master/example.ipynb) for a detailed presentation.
+See [example.ipynb](./example.ipynb) for a detailed presentation.
 
 ## Requirements
 
