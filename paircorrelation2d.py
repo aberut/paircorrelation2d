@@ -125,8 +125,12 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
             print('The list of coordinates your provided for the border is not valid (see help for the definition of valid coord_border).')
             return
         
+        #redefinition of "array_positions" with only the points inside the area of interest
         positions_of_interest=area_of_interest.intersection(MultiPoint(array_positions)) #only the points inside the area of interest are considered
-        array_positions=np.array(positions_of_interest) #redefinition of "array_positions" with only the points inside the area of interest (time consuming operation)
+        
+        array_positions=np.zeros((len(positions_of_interest.geoms),2))
+        for i_points in range(len(positions_of_interest.geoms)):
+            array_positions[i_points,:]=np.asarray(positions_of_interest.geoms[i_points].coords)
     
     if show_timing==True:
         t1=time.time()-t0
@@ -166,7 +170,7 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
     if fast_method==True:
         
         for ii in range(nb_part):
-            dist_to_border[ii]=positions_of_interest[ii].distance(border_area) #distance of current point to boundary
+            dist_to_border[ii]=positions_of_interest.geoms[ii].distance(border_area) #distance of current point to boundary
         
         far_enough=np.where(dist_to_border>bins_distances[-1])[0] #indexes of points far enough from the boundary
         array_positions=array_positions[far_enough,:] #points too close to the boundary are excluded
@@ -179,14 +183,14 @@ def pcf2d(array_positions,bins_distances,coord_border=None,coord_holes=None,fast
     else:
         
         for ii in range(nb_part):
-            dist_to_border[ii]=positions_of_interest[ii].distance(border_area) #distance of point ii to boundary
+            dist_to_border[ii]=positions_of_interest.geoms[ii].distance(border_area) #distance of point ii to boundary
             
             if dist_to_border[ii]<=bins_distances[0]: #special case the point is too close to the boundary for every r
                 for jj in range(len(bins_distances)-1):
-                    normalisation[ii,jj]=(area_of_interest.intersection(translate(rings[jj],xoff=positions_of_interest[ii].xy[0][0],yoff=positions_of_interest[ii].xy[1][0])).area)/ring_area_approx[jj]
+                    normalisation[ii,jj]=(area_of_interest.intersection(translate(rings[jj],xoff=positions_of_interest.geoms[ii].xy[0][0],yoff=positions_of_interest.geoms[ii].xy[1][0])).area)/ring_area_approx[jj]
             else:
                 for jj in (np.where(bins_distances>dist_to_border[ii])[0]-1): #the normalization factor needs only to be computed for a subset of r
-                    normalisation[ii,jj]=(area_of_interest.intersection(translate(rings[jj],xoff=positions_of_interest[ii].xy[0][0],yoff=positions_of_interest[ii].xy[1][0])).area)/ring_area_approx[jj]
+                    normalisation[ii,jj]=(area_of_interest.intersection(translate(rings[jj],xoff=positions_of_interest.geoms[ii].xy[0][0],yoff=positions_of_interest.geoms[ii].xy[1][0])).area)/ring_area_approx[jj]
     
     if show_timing==True:
         t3=time.time()-t0
