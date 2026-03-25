@@ -1,4 +1,4 @@
-# paircorrelation2d
+# paircorrelation2d [![DOI](https://zenodo.org/badge/343388907.svg)](https://doi.org/10.5281/zenodo.19227288)
 
 paircorrelation2d is a Python module to compute the 2D pair correlation function ([radial distribution function](https://en.wikipedia.org/wiki/Radial_distribution_function)) g(r) for a set of points, corrected to take account of the boundary effects.
 
@@ -33,6 +33,10 @@ See [example.ipynb](./example.ipynb) for a detailed presentation.
 - [numpy](https://numpy.org/) (>=1.19)
 - [matplotlib](https://matplotlib.org/index.html) (>=3.3)
 - [shapely](https://shapely.readthedocs.io/en/latest/manual.html) (>=1.8)
+
+## If you want to cite this code in an article, please do as:
+
+aberut/paircorrelation2d: v1.0, A. Bérut (2022). DOI: [10.5281/zenodo.19227289](https://doi.org/10.5281/zenodo.19227288)
 
 ## License
 
