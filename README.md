@@ -34,9 +34,11 @@ See [example.ipynb](./example.ipynb) for a detailed presentation.
 - [matplotlib](https://matplotlib.org/index.html) (>=3.3)
 - [shapely](https://shapely.readthedocs.io/en/latest/manual.html) (>=1.8)
 
-## If you want to cite this code in an article, please do as:
+## Citation
 
-paircorrelation2d (v1.0), A. Bérut (2022). DOI: [10.5281/zenodo.19227289](https://doi.org/10.5281/zenodo.19227288)
+If you would like to use this code in a scientific work, please cite as:  
+
+> paircorrelation2d (v1.0), A. Bérut (2022). DOI: [10.5281/zenodo.19227289](https://doi.org/10.5281/zenodo.19227288)
 
 ## License
 
